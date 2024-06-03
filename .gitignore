@@ -1,6 +1,9 @@
 # Local .terraform directories
 **/.terraform/*
 
+#tfiles to ignore for module setup
+versions.tf
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
