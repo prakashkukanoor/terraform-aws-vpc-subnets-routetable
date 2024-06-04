@@ -20,18 +20,18 @@ variable "vpc" {
 
 variable "public_subnets" {
   type = map(object({
-    cidr_ipv4 = string
+    cidr_ipv4         = string
     availability_zone = string
   }))
   description = "Define list of public subnet cidr blocks"
-  default = {}
+  default     = {}
 }
 
 variable "private_subnets" {
   type = map(object({
-    cidr_ipv4 = string
+    cidr_ipv4         = string
     availability_zone = string
   }))
   description = "Define list of public subnet cidr blocks"
-  default = {}
+  default     = {}
 }
