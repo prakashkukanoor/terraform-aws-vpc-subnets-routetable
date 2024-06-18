@@ -3,6 +3,7 @@
 
 #tfiles to ignore for module setup
 versions.tf
+**/.DS_Store
 
 # .tfstate files
 *.tfstate
