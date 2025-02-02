@@ -10,6 +10,6 @@ output "application_private_subnets" {
   value = aws_vpc.aws_subnet.application_private[*].id
 }
 
-output "vpc" {
+output "database_private_subnets" {
   value = aws_vpc.aws_subnet.database_private[*].id
 }
