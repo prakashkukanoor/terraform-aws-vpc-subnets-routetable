@@ -9,6 +9,29 @@ variable "team" {
   type = string
 }
 
+variable "availability_zones" {
+   type = list(string)
+}
+
+variable "enable_ipv6" {
+   type = bool
+}
+
 variable "vpc_cidr_ipv4" {
    type = string
 }
+
+variable "application_public_subnets" {
+  type = list(string)
+}
+
+variable "application_private_subnets" {
+  type = list(string)
+}
+
+variable "application_database_subnets" {
+  type = list(string)
+}
+
+
+
