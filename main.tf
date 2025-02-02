@@ -39,21 +39,3 @@ resource "aws_subnet" "application_public" {
     local.comman_tags,
   { Name = "Application-Public-${var.environment}" })
 }
-
-# resource "aws_subnet" "application_private" {
-#   vpc_id     = aws_vpc.this.id
-#   cidr_block = var.application_private_subnets.cidr_ipv4
-
-#   tags = merge(
-#     local.comman_tags,
-#   { Name = "Application-Private-${var.environment}" })
-# }
-
-# resource "aws_subnet" "database_private" {
-#   vpc_id     = aws_vpc.this.id
-#   cidr_block = var.application_database_subnets.cidr_ipv4
-
-#   tags = merge(
-#     local.comman_tags,
-#   { Name = "Database-Private-${var.environment}" })
-# }
