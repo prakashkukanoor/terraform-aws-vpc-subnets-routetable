@@ -25,13 +25,13 @@ variable "application_public_subnets" {
   type = list(string)
 }
 
-# variable "application_private_subnets" {
-#   type = list(string)
-# }
+variable "application_private_subnets" {
+  type = list(string)
+}
 
-# variable "application_database_subnets" {
-#   type = list(string)
-# }
+variable "database_private_subnets" {
+  type = list(string)
+}
 
 
 
