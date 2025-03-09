@@ -22,16 +22,20 @@ variable "vpc_cidr_ipv4" {
 }
 
 variable "application_public_subnets" {
-  type = list(string)
+  type = list(object({
+    az = string
+    ipv4_cidr = string
+    ipv6_cidr = string
+  }))
 }
 
-variable "application_private_subnets" {
-  type = list(string)
-}
+# variable "application_private_subnets" {
+#   type = list(string)
+# }
 
-variable "database_private_subnets" {
-  type = list(string)
-}
+# variable "database_private_subnets" {
+#   type = list(string)
+# }
 
 
 
