@@ -33,6 +33,7 @@ resource "aws_subnet" "application_public" {
   availability_zone       = var.application_public_subnets[count.index].az
 
   ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 64, count.index) : null
+  assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.comman_tags,
