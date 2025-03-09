@@ -10,20 +10,20 @@ variable "team" {
 }
 
 variable "availability_zones" {
-   type = list(string)
+  type = list(string)
 }
 
 variable "enable_ipv6" {
-   type = bool
+  type = bool
 }
 
 variable "vpc_cidr_ipv4" {
-   type = string
+  type = string
 }
 
 variable "application_public_subnets" {
   type = list(object({
-    az = string
+    az        = string
     ipv4_cidr = string
     ipv6_cidr = string
   }))

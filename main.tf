@@ -13,11 +13,11 @@ provider "aws" {
 
 # Create VPC with IPv4 and IPv6 CIDR
 resource "aws_vpc" "this" {
-  cidr_block           = var.vpc_cidr_ipv4
+  cidr_block                       = var.vpc_cidr_ipv4
   assign_generated_ipv6_cidr_block = true
-  instance_tenancy     = "default"
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+  instance_tenancy                 = "default"
+  enable_dns_hostnames             = true
+  enable_dns_support               = true
 
   tags = merge(
     local.comman_tags,
@@ -27,13 +27,12 @@ resource "aws_vpc" "this" {
 resource "aws_subnet" "application_public" {
   count = length(var.application_public_subnets)
 
-  vpc_id     = aws_vpc.this.id
-  cidr_block = var.application_public_subnets[count.index].ipv4_cidr
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone = var.application_public_subnets[count.index].az
-  
-  ipv6_cidr_block           = var.enable_ipv6 ? var.application_public_subnets[count.index].ipv6_cidr : null
-  assign_ipv6_address_on_creation = var.enable_ipv6
+  availability_zone       = var.application_public_subnets[count.index].az
+
+  ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 64, count.index) : null
 
   tags = merge(
     local.comman_tags,
@@ -47,7 +46,7 @@ resource "aws_subnet" "application_public" {
 #   cidr_block = var.application_private_subnets[count.index]
 #   map_public_ip_on_launch = true
 #   availability_zone = element(var.availability_zones, count.index)
-  
+
 #   ipv6_cidr_block           = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index + length(var.application_private_subnets)) : null
 #   assign_ipv6_address_on_creation = var.enable_ipv6
 
@@ -63,7 +62,7 @@ resource "aws_subnet" "application_public" {
 #   cidr_block = var.database_private_subnets[count.index]
 #   map_public_ip_on_launch = true
 #   availability_zone = element(var.availability_zones, count.index)
-  
+
 #   ipv6_cidr_block           = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index + length(var.database_private_subnets)) : null
 #   assign_ipv6_address_on_creation = var.enable_ipv6
 
