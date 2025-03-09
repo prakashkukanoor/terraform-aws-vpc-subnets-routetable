@@ -25,7 +25,6 @@ variable "application_public_subnets" {
   type = list(object({
     az        = string
     ipv4_cidr = string
-    ipv6_cidr = string
   }))
 }
 
