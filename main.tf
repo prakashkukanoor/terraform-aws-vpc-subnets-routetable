@@ -32,7 +32,7 @@ resource "aws_subnet" "application_public" {
   map_public_ip_on_launch = true
   availability_zone       = var.application_public_subnets[count.index].az
 
-  ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
@@ -48,7 +48,7 @@ resource "aws_subnet" "application_private" {
   map_public_ip_on_launch = true
   availability_zone       = var.application_private_subnets[count.index].az
 
-  ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_private_subnets[count.index].ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_private_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
@@ -64,7 +64,7 @@ resource "aws_subnet" "database_private" {
   map_public_ip_on_launch = true
   availability_zone       = var.database_private_subnets[count.index].az
 
-  ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.database_private_subnets[count.index].ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.database_private_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
@@ -89,7 +89,7 @@ resource "aws_eip" "natgw" {
 }
 
 resource "aws_nat_gateway" "this" {
-  count = length(aws_subnet.application_public)
+  count         = length(aws_subnet.application_public)
   allocation_id = aws_eip.natgw[count.index].id
   subnet_id     = aws_subnet.application_public[count.index].id
 
@@ -98,4 +98,30 @@ resource "aws_nat_gateway" "this" {
   { Name = "NATGW-${var.environment}" })
 
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
+}
+
+resource "aws_route_table" "application_public" {
+  vpc_id = aws_vpc.this.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.this
+  }
+  route {
+    cidr_block = "::/0"
+    gateway_id = aws_internet_gateway.this
+  }
+
+  depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
+
+  tags = merge(
+    local.comman_tags,
+  { Name = "Application-Public-RouteTable-${var.environment}" })
+}
+
+resource "aws_route_table_association" "application_public" {
+  count         = length(aws_subnet.application_public)
+
+  subnet_id      = aws_subnet.application_public[count.index].id
+  route_table_id = aws_route_table.application_public.id
 }
