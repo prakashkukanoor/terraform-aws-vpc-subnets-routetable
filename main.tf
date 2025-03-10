@@ -80,19 +80,20 @@ resource "aws_internet_gateway" "this" {
   { Name = "IGW-${var.environment}" })
 }
 
+resource "aws_eip" "natgw" {
+  tags = merge(
+    local.comman_tags,
+  { Name = "EIP-NATGW-${var.environment}" })
+}
+
 resource "aws_nat_gateway" "this" {
+  for_each = aws_subnet.application_public
   allocation_id = aws_eip.natgw.id
-  subnet_id     = aws_subnet.application_public[0].id
+  subnet_id     = each.value.id
 
   tags = merge(
     local.comman_tags,
   { Name = "NATGW-${var.environment}" })
 
   depends_on = [aws_internet_gateway.this]
-}
-
-resource "aws_eip" "natgw" {
-  tags = merge(
-    local.comman_tags,
-  { Name = "EIP-NATGW-${var.environment}" })
 }
