@@ -71,3 +71,28 @@ resource "aws_subnet" "database_private" {
     local.comman_tags,
   { Name = "Database-Private-${var.application_public_subnets[count.index].az}" })
 }
+
+resource "aws_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
+
+  tags = merge(
+    local.comman_tags,
+  { Name = "IGW-${var.environment}" })
+}
+
+resource "aws_nat_gateway" "this" {
+  allocation_id = aws_eip.natgw.id
+  subnet_id     = aws_subnet.application_public[0].id
+
+  tags = merge(
+    local.comman_tags,
+  { Name = "NATGW-${var.environment}" })
+
+  depends_on = [aws_internet_gateway.this]
+}
+
+resource "aws_eip" "natgw" {
+  tags = merge(
+    local.comman_tags,
+  { Name = "EIP-NATGW-${var.environment}" })
+}
