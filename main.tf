@@ -37,7 +37,7 @@ resource "aws_subnet" "application_public" {
 
   tags = merge(
     local.comman_tags,
-  { Name = "Application-Public-${var.application_public_subnets[count.index].az}" })
+  { Name = "Application-Public-${var.environment}" })
 }
 
 resource "aws_subnet" "application_private" {
