@@ -28,16 +28,16 @@ resource "aws_subnet" "application_public" {
   count = length(var.application_public_subnets)
 
   vpc_id                  = aws_vpc.this.id
-  cidr_block              = var.application_public_subnets[count.index]
+  cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone       = element(var.availability_zones, count.index)
+  availability_zone       = var.application_public_subnets[count.index].az
 
-  ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index) : null
+  ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.comman_tags,
-  { Name = "Application-Public-${var.environment}" })
+  { Name = "Application-Public-${var.application_public_subnets[count.index].az}" })
 }
 
 # resource "aws_subnet" "application_private" {
@@ -48,7 +48,7 @@ resource "aws_subnet" "application_public" {
 #   map_public_ip_on_launch = true
 #   availability_zone = element(var.availability_zones, count.index)
 
-#   ipv6_cidr_block           = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index) : null
+#   ipv6_cidr_block           = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index + length(var.application_private_subnets)) : null
 #   assign_ipv6_address_on_creation = var.enable_ipv6
 
 #   tags = merge(
@@ -64,7 +64,7 @@ resource "aws_subnet" "application_public" {
 #   map_public_ip_on_launch = true
 #   availability_zone = element(var.availability_zones, count.index)
 
-#   ipv6_cidr_block           = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index) : null
+#   ipv6_cidr_block           = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index + length(var.database_private_subnets)) : null
 #   assign_ipv6_address_on_creation = var.enable_ipv6
 
 #   tags = merge(

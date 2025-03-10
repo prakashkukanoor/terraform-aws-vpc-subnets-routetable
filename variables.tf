@@ -22,7 +22,11 @@ variable "vpc_cidr_ipv4" {
 }
 
 variable "application_public_subnets" {
-  type = list(string)
+  type = list(object({
+    az        = string
+    ipv4_cidr = string
+    ipv6_index = number
+  }))
 }
 
 # variable "application_private_subnets" {
