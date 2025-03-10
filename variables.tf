@@ -9,10 +9,6 @@ variable "team" {
   type = string
 }
 
-variable "availability_zones" {
-  type = list(string)
-}
-
 variable "enable_ipv6" {
   type = bool
 }

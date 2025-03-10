@@ -53,7 +53,7 @@ resource "aws_subnet" "application_private" {
 
   tags = merge(
     local.comman_tags,
-  { Name = "Application-Private-${var.environment}" })
+  { Name = "Application-Private-${var.application_public_subnets[count.index].az}" })
 }
 
 resource "aws_subnet" "database_private" {
@@ -69,5 +69,5 @@ resource "aws_subnet" "database_private" {
 
   tags = merge(
     local.comman_tags,
-  { Name = "Database-Private-${var.environment}" })
+  { Name = "Database-Private-${var.application_public_subnets[count.index].az}" })
 }
