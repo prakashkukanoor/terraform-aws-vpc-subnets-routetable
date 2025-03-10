@@ -87,9 +87,9 @@ resource "aws_eip" "natgw" {
 }
 
 resource "aws_nat_gateway" "this" {
-  for_each = aws_subnet.application_public
+  # for_each = aws_subnet.application_public
   allocation_id = aws_eip.natgw.id
-  subnet_id     = each.value.id
+  subnet_id     = aws_subnet.application_public[0].id
 
   tags = merge(
     local.comman_tags,
