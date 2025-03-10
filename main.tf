@@ -34,7 +34,7 @@ resource "aws_subnet" "application_public" {
 
   ipv6_cidr_block = "2001:db8:1234:1a00::/64"
   # ipv6_cidr_block = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 64, count.index) : null
-  # assign_ipv6_address_on_creation = var.enable_ipv6
+  assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.comman_tags,
