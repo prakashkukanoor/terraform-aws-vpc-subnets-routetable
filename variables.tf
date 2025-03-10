@@ -29,13 +29,21 @@ variable "application_public_subnets" {
   }))
 }
 
-# variable "application_private_subnets" {
-#   type = list(string)
-# }
+variable "application_private_subnets" {
+  type = list(object({
+    az        = string
+    ipv4_cidr = string
+    ipv6_index = number
+  }))
+}
 
-# variable "database_private_subnets" {
-#   type = list(string)
-# }
+variable "database_private_subnets" {
+  type = list(object({
+    az        = string
+    ipv4_cidr = string
+    ipv6_index = number
+  }))
+}
 
 
 
