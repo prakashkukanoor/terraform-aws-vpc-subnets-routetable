@@ -108,7 +108,7 @@ resource "aws_route_table" "application_public" {
     gateway_id = aws_internet_gateway.this.id
   }
   route {
-    cidr_block = "::/0"
+    ipv6_cidr_block = "::/0"
     gateway_id = aws_internet_gateway.this.id
   }
 
