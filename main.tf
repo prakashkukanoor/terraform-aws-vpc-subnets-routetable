@@ -81,7 +81,7 @@ resource "aws_internet_gateway" "this" {
 }
 
 resource "aws_eip" "natgw" {
-  count = length(aws_subnet.application_public)
+  count = length(var.availability_zone)
 
   tags = merge(
     local.comman_tags,
@@ -89,13 +89,13 @@ resource "aws_eip" "natgw" {
 }
 
 resource "aws_nat_gateway" "this" {
-  count         = length(aws_subnet.application_public)
+  count         = length(var.availability_zone)
   allocation_id = aws_eip.natgw[count.index].id
   subnet_id     = aws_subnet.application_public[count.index].id
 
   tags = merge(
     local.comman_tags,
-  { Name = "NATGW-${var.environment}" })
+  { Name = "NATGW-${var.availability_zone[count.index]}-${var.environment}" })
 
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
 }
@@ -124,4 +124,31 @@ resource "aws_route_table_association" "application_public" {
 
   subnet_id      = aws_subnet.application_public[count.index].id
   route_table_id = aws_route_table.application_public.id
+}
+
+resource "aws_route_table" "application_private" {
+  count         = length(var.availability_zone)
+  vpc_id = aws_vpc.this.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.this[count.index].id
+  }
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id = aws_nat_gateway.this[count.index].id
+  }
+
+  depends_on = [aws_subnet.application_private, aws_nat_gateway.this]
+
+  tags = merge(
+    local.comman_tags,
+  { Name = "Application-Private-RouteTable-${var.environment}" })
+}
+
+resource "aws_route_table_association" "application_private" {
+  count         = length(aws_subnet.application_private)
+
+  subnet_id      = aws_subnet.application_private[count.index].id
+  route_table_id = aws_route_table.application_private[count.index].id
 }

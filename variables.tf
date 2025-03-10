@@ -17,6 +17,10 @@ variable "vpc_cidr_ipv4" {
   type = string
 }
 
+variable "availability_zone" {
+  type = list(string)
+}
+
 variable "application_public_subnets" {
   type = list(object({
     az         = string
