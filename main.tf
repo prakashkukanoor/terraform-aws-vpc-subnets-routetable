@@ -150,5 +150,5 @@ resource "aws_route_table_association" "application_private" {
   count         = length(aws_subnet.application_private)
 
   subnet_id      = aws_subnet.application_private[count.index].id
-  route_table_id = aws_route_table.application_private[count.index].id
+  route_table_id = element(aws_route_table.application_private[*].id, count.index)
 }
