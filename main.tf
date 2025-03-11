@@ -1,5 +1,5 @@
 locals {
-  comman_tags = {
+  common_tags = {
     environment = var.environment
     managedBy   = var.team
     createdBy   = "terraform"
@@ -20,7 +20,7 @@ resource "aws_vpc" "this" {
   enable_dns_support               = true
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "VPC-${var.environment}" })
 }
 
@@ -36,7 +36,7 @@ resource "aws_subnet" "application_public" {
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Application-Public-${element(var.availability_zone, count.index)}" })
 }
 
@@ -52,7 +52,7 @@ resource "aws_subnet" "application_private" {
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Application-Private-${element(var.availability_zone, count.index)}" })
 }
 
@@ -68,7 +68,7 @@ resource "aws_subnet" "database_private" {
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Database-Private-${element(var.availability_zone, count.index)}" })
 }
 
@@ -76,7 +76,7 @@ resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "IGW-${var.environment}" })
 }
 
@@ -84,7 +84,7 @@ resource "aws_eip" "natgw" {
   count = length(var.availability_zone)
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "EIP-NATGW-${var.environment}" })
 }
 
@@ -94,7 +94,7 @@ resource "aws_nat_gateway" "this" {
   subnet_id     = aws_subnet.application_public[count.index].id
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "NATGW-${var.availability_zone[count.index]}-${var.environment}" })
 
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
@@ -104,7 +104,7 @@ resource "aws_egress_only_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Egress-IGW-${var.environment}" })
 }
 
@@ -123,7 +123,7 @@ resource "aws_route_table" "application_public" {
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Application-Public-RouteTable-${var.environment}" })
 }
 
@@ -150,7 +150,7 @@ resource "aws_route_table" "application_private" {
   depends_on = [aws_subnet.application_private, aws_nat_gateway.this]
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Application-Private-RouteTable-${var.environment}" })
 }
 
@@ -177,7 +177,7 @@ resource "aws_route_table" "database_private" {
   depends_on = [aws_subnet.database_private, aws_nat_gateway.this, aws_egress_only_internet_gateway.this]
 
   tags = merge(
-    local.comman_tags,
+    local.common_tags,
   { Name = "Database-Private-RouteTable-${var.environment}" })
 }
 
