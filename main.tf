@@ -160,3 +160,30 @@ resource "aws_route_table_association" "application_private" {
   subnet_id      = aws_subnet.application_private[count.index].id
   route_table_id = element(aws_route_table.application_private[*].id, count.index)
 }
+
+resource "aws_route_table" "database_private" {
+  count  = length(var.availability_zone)
+  vpc_id = aws_vpc.this.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.this[count.index].id
+  }
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_egress_only_internet_gateway.this.id
+  }
+
+  depends_on = [aws_subnet.database_private, aws_nat_gateway.this, aws_egress_only_internet_gateway.this]
+
+  tags = merge(
+    local.comman_tags,
+  { Name = "Database-Private-RouteTable-${var.environment}" })
+}
+
+resource "aws_route_table_association" "database_private" {
+  count = length(aws_subnet.database_private)
+
+  subnet_id      = aws_subnet.database_private[count.index].id
+  route_table_id = element(aws_route_table.database_private[*].id, count.index)
+}
