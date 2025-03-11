@@ -30,14 +30,14 @@ resource "aws_subnet" "application_public" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone       = var.application_public_subnets[count.index].az
+  availability_zone       = element(var.availability_zone, count.index)
 
   ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.comman_tags,
-  { Name = "Application-Public-${var.application_public_subnets[count.index].az}" })
+  { Name = "Application-Public-${element(var.availability_zone, count.index)}" })
 }
 
 resource "aws_subnet" "application_private" {
@@ -46,14 +46,14 @@ resource "aws_subnet" "application_private" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = var.application_private_subnets[count.index].ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone       = var.application_private_subnets[count.index].az
+  availability_zone       = element(var.availability_zone, count.index)
 
   ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_private_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.comman_tags,
-  { Name = "Application-Private-${var.application_public_subnets[count.index].az}" })
+  { Name = "Application-Private-${element(var.availability_zone, count.index)}" })
 }
 
 resource "aws_subnet" "database_private" {
@@ -62,14 +62,14 @@ resource "aws_subnet" "database_private" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = var.database_private_subnets[count.index].ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone       = var.database_private_subnets[count.index].az
+  availability_zone       = element(var.availability_zone, count.index)
 
   ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.database_private_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.comman_tags,
-  { Name = "Database-Private-${var.application_public_subnets[count.index].az}" })
+  { Name = "Database-Private-${element(var.availability_zone, count.index)}" })
 }
 
 resource "aws_internet_gateway" "this" {
@@ -109,7 +109,7 @@ resource "aws_route_table" "application_public" {
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id = aws_internet_gateway.this.id
+    gateway_id      = aws_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
@@ -120,14 +120,14 @@ resource "aws_route_table" "application_public" {
 }
 
 resource "aws_route_table_association" "application_public" {
-  count         = length(aws_subnet.application_public)
+  count = length(aws_subnet.application_public)
 
   subnet_id      = aws_subnet.application_public[count.index].id
   route_table_id = aws_route_table.application_public.id
 }
 
 resource "aws_route_table" "application_private" {
-  count         = length(var.availability_zone)
+  count  = length(var.availability_zone)
   vpc_id = aws_vpc.this.id
 
   route {
@@ -136,7 +136,7 @@ resource "aws_route_table" "application_private" {
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id = aws_nat_gateway.this[count.index].id
+    gateway_id      = aws_nat_gateway.this[count.index].id
   }
 
   depends_on = [aws_subnet.application_private, aws_nat_gateway.this]
@@ -147,7 +147,7 @@ resource "aws_route_table" "application_private" {
 }
 
 resource "aws_route_table_association" "application_private" {
-  count         = length(aws_subnet.application_private)
+  count = length(aws_subnet.application_private)
 
   subnet_id      = aws_subnet.application_private[count.index].id
   route_table_id = element(aws_route_table.application_private[*].id, count.index)
