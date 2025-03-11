@@ -100,6 +100,14 @@ resource "aws_nat_gateway" "this" {
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
 }
 
+resource "aws_egress_only_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
+
+  tags = merge(
+    local.comman_tags,
+  { Name = "Egress-IGW-${var.environment}" })
+}
+
 resource "aws_route_table" "application_public" {
   vpc_id = aws_vpc.this.id
 
@@ -109,7 +117,7 @@ resource "aws_route_table" "application_public" {
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = aws_internet_gateway.this.id
+    gateway_id      = aws_egress_only_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
@@ -136,7 +144,7 @@ resource "aws_route_table" "application_private" {
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = aws_nat_gateway.this[count.index].id
+    gateway_id      = aws_egress_only_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.application_private, aws_nat_gateway.this]
