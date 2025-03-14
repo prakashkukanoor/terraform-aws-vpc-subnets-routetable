@@ -117,7 +117,7 @@ resource "aws_route_table" "application_public" {
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = aws_egress_only_internet_gateway.this.id
+    gateway_id      = aws_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.application_public, aws_internet_gateway.this]
