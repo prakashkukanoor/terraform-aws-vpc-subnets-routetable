@@ -198,6 +198,6 @@ resource "aws_vpc_endpoint" "gateway" {
 
   tags = merge(
     local.common_tags,
-  { Name = "VPCE-${var.environment}" })
+  { Name = "VPCE-${each.key}-${var.environment}" })
 
 }
