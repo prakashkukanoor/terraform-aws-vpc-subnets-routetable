@@ -189,9 +189,10 @@ resource "aws_route_table_association" "database_private" {
 }
 
 # Create VPC Endpoint for S3
-resource "aws_vpc_endpoint" "s3" {
+resource "aws_vpc_endpoint" "gateway" {
+  for_each = {for key, value in vpc_endpoints: key => value if value}
   vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.us-east-1.s3"
+  service_name       = "com.amazonaws.us-east-1.{key}"
   vpc_endpoint_type  = "Gateway"
   route_table_ids    = aws_route_table.application_private[*].id
 

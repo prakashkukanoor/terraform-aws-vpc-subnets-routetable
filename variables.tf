@@ -42,5 +42,12 @@ variable "database_private_subnets" {
   }))
 }
 
+variable "vpc_endpoints" {
+  type = map(bool)
+  default = {
+    s3        = true
+    dynamodb  = true
+  }
+}
 
 
