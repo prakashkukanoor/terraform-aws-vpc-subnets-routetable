@@ -195,4 +195,8 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type  = "Gateway"
   route_table_ids    = aws_route_table.application_private[*].id
 
+  tags = merge(
+    local.common_tags,
+  { Name = "VPCE-${var.environment}" })
+
 }
