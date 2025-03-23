@@ -192,7 +192,7 @@ resource "aws_route_table_association" "database_private" {
 resource "aws_vpc_endpoint" "gateway" {
   for_each = {for key, value in var.vpc_endpoints: key => value if value}
   vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.us-east-1.${key}"
+  service_name       = "com.amazonaws.us-east-1.${each.key}"
   vpc_endpoint_type  = "Gateway"
   route_table_ids    = aws_route_table.application_private[*].id
 
