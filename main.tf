@@ -187,3 +187,12 @@ resource "aws_route_table_association" "database_private" {
   subnet_id      = aws_subnet.database_private[count.index].id
   route_table_id = element(aws_route_table.database_private[*].id, count.index)
 }
+
+# Create VPC Endpoint for S3
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id             = aws_vpc.this.id
+  service_name       = "com.amazonaws.us-east-1.s3"
+  vpc_endpoint_type  = "Gateway"
+  route_table_ids    = aws_route_table.application_private[*].id
+
+}
