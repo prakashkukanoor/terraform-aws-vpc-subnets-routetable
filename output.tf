@@ -15,9 +15,9 @@ output "database_private_subnet_ids" {
 }
 
 output "aws_vpce_gateway_dynamodb_id" {
-  value = aws_vpc_endpoint.gateway.dynamodb.id
+  value = aws_vpc_endpoint.gateway
 }
 
-output "aws_vpce_gateway_s3_id" {
-  value = aws_vpc_endpoint.gateway.s3.id
-}
+# output "aws_vpce_gateway_s3_id" {
+#   value = aws_vpc_endpoint.gateway.s3.id
+# }
