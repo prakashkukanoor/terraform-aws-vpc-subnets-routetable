@@ -42,7 +42,7 @@ variable "database_private_subnets" {
   }))
 }
 
-variable "vpc_endpoints" {
+variable "vpc_gateway_endpoints" {
   type = map(bool)
   default = {
     s3        = true
