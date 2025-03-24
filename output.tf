@@ -14,6 +14,6 @@ output "database_private_subnet_ids" {
   value = aws_subnet.database_private[*].id
 }
 
-# output "aws_vpc_endpoint_gateway_ids" {
-#   value = aws_vpc_endpoint.gateway.id
-# }
+output "aws_vpc_endpoint_gateway_ids" {
+  value = aws_vpc_endpoint.gateway
+}
