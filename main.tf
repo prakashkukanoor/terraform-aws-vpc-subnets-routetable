@@ -204,11 +204,11 @@ resource "aws_vpc_endpoint" "gateway" {
 
 # Create VPC Interface Endpoint
 resource "aws_vpc_endpoint" "interface" {
-  for_each          = { for key, value in var.vpc_interface_endpoints : key => value if value }
-  vpc_id            = aws_vpc.this.id
-  service_name      = "com.amazonaws.${var.region}.${each.key}"
-  vpc_endpoint_type = "Interface"
-  subnet_ids   = aws_subnet.application_private[*].id
+  for_each            = { for key, value in var.vpc_interface_endpoints : key => value if value }
+  vpc_id              = aws_vpc.this.id
+  service_name        = "com.amazonaws.${var.region}.${each.key}"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = aws_subnet.application_private[*].id
   private_dns_enabled = true
 
   tags = merge(
