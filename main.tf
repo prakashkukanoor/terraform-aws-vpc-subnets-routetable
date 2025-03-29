@@ -208,7 +208,7 @@ resource "aws_vpc_endpoint" "interface" {
   vpc_id            = aws_vpc.this.id
   service_name      = "com.amazonaws.${var.region}.${each.key}"
   vpc_endpoint_type = "Interface"
-  route_table_ids   = aws_route_table.application_private[*].id
+  subnet_ids   = aws_route_table.application_private[*].id
 
   tags = merge(
     local.common_tags,
