@@ -23,5 +23,5 @@ output "aws_vpce_gateway_s3_id" {
 }
 
 output "aws_vpce_interface_events_id" {
-  value = aws_vpc_endpoint.gateway["events"].id
+  value = aws_vpc_endpoint.interface["events"].id
 }
