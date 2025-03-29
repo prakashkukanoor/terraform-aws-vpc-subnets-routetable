@@ -21,3 +21,7 @@ output "aws_vpce_gateway_dynamodb_id" {
 output "aws_vpce_gateway_s3_id" {
   value = aws_vpc_endpoint.gateway["s3"].id
 }
+
+output "aws_vpce_interface_events_id" {
+  value = aws_vpc_endpoint.gateway["events"].id
+}
