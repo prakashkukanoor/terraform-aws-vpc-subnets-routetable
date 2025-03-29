@@ -209,6 +209,7 @@ resource "aws_vpc_endpoint" "interface" {
   service_name      = "com.amazonaws.${var.region}.${each.key}"
   vpc_endpoint_type = "Interface"
   subnet_ids   = aws_subnet.application_private[*].id
+  private_dns_enabled = true
 
   tags = merge(
     local.common_tags,
