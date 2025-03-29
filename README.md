@@ -7,4 +7,3 @@ This module can be imported to create below resource in AWS
 - private subnets
     - Route table will be created
     - NAT gateway (public facing) will be attached to the route table
-

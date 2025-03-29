@@ -45,8 +45,15 @@ variable "database_private_subnets" {
 variable "vpc_gateway_endpoints" {
   type = map(bool)
   default = {
-    s3        = true
-    dynamodb  = true
+    s3       = true
+    dynamodb = true
+  }
+}
+
+variable "vpc_interface_endpoints" {
+  type = map(bool)
+  default = {
+    events = true
   }
 }
 

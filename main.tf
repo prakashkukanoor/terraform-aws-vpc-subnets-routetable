@@ -188,16 +188,30 @@ resource "aws_route_table_association" "database_private" {
   route_table_id = element(aws_route_table.database_private[*].id, count.index)
 }
 
-# Create VPC Endpoint for S3
+# Create VPC Gateway Endpoint
 resource "aws_vpc_endpoint" "gateway" {
-  for_each = {for key, value in var.vpc_gateway_endpoints: key => value if value}
-  vpc_id             = aws_vpc.this.id
-  service_name       = "com.amazonaws.us-east-1.${each.key}"
-  vpc_endpoint_type  = "Gateway"
-  route_table_ids    = aws_route_table.application_private[*].id
+  for_each          = { for key, value in var.vpc_gateway_endpoints : key => value if value }
+  vpc_id            = aws_vpc.this.id
+  service_name      = "com.amazonaws.${var.region}.${each.key}"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = aws_route_table.application_private[*].id
 
   tags = merge(
     local.common_tags,
-  { Name = "VPCE-${each.key}-${var.environment}" })
+  { Name = "GW-VPCE-${each.key}-${var.environment}" })
+
+}
+
+# Create VPC Interface Endpoint
+resource "aws_vpc_endpoint" "interface" {
+  for_each          = { for key, value in var.vpc_interface_endpoints : key => value if value }
+  vpc_id            = aws_vpc.this.id
+  service_name      = "com.amazonaws.${var.region}.${each.key}"
+  vpc_endpoint_type = "Interface"
+  route_table_ids   = aws_route_table.application_private[*].id
+
+  tags = merge(
+    local.common_tags,
+  { Name = "Interface-VPCE-${each.key}-${var.environment}" })
 
 }
