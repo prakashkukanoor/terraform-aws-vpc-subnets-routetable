@@ -2,9 +2,9 @@ output "vpc_id" {
   value = aws_vpc.this.id
 }
 
-output "application_public_subnet_ids" {
-  value = aws_subnet.application_public[*].id
-}
+# output "application_public_subnet_ids" {
+#   value = aws_subnet.application_public[*].id
+# }
 
 output "application_private_subnet_ids" {
   value = aws_subnet.application_private[*].id
