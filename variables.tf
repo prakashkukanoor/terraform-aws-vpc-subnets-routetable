@@ -22,10 +22,28 @@ variable "availability_zone" {
 }
 
 variable "application_public_subnets" {
-  type = list(object({
+  type = map(object({
     ipv4_cidr  = string
     ipv6_index = number
   }))
+  default = {
+    "Application-Public-Subnet-01" = {
+      az = "us-east-1a"
+      ipv4_cidr = "10.0.0.0/24"
+      ipv6_index = 0
+    }
+    "Application-Public-Subnet-02" = {
+      az = "us-east-1b"
+      ipv4_cidr = "10.0.1.0/24"
+      ipv6_index = 1
+    }
+    "Application-Public-Subnet-03" = {
+      az = "us-east-1c"
+      ipv4_cidr = "10.0.2.0/24"
+      ipv6_index = 2
+    }
+  }
+  
 }
 
 variable "application_private_subnets" {

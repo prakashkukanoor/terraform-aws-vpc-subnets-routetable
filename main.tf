@@ -25,20 +25,36 @@ resource "aws_vpc" "this" {
 }
 
 resource "aws_subnet" "application_public" {
-  count = length(var.application_public_subnets)
+  for_each = var.application_public_subnets
 
   vpc_id                  = aws_vpc.this.id
-  cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
+  cidr_block              = each.value.ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone       = element(var.availability_zone, count.index)
+  availability_zone       = each.value.az
 
-  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, each.value.ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.common_tags,
-  { Name = "Application-Public-${element(var.availability_zone, count.index)}" })
+  { Name = "${each.key}-${each.value.az}" })
 }
+
+# resource "aws_subnet" "application_public" {
+#   count = length(var.application_public_subnets)
+
+#   vpc_id                  = aws_vpc.this.id
+#   cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
+#   map_public_ip_on_launch = true
+#   availability_zone       = element(var.availability_zone, count.index)
+
+#   ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
+#   assign_ipv6_address_on_creation = var.enable_ipv6
+
+#   tags = merge(
+#     local.common_tags,
+#   { Name = "Application-Public-${element(var.availability_zone, count.index)}" })
+# }
 
 resource "aws_subnet" "application_private" {
   count = length(var.application_private_subnets)
