@@ -144,9 +144,9 @@ resource "aws_route_table" "application_public" {
 }
 
 resource "aws_route_table_association" "application_public" {
-  count = length(aws_subnet.application_public)
+  for_each = aws_subnet.application_public
 
-  subnet_id      = aws_subnet.application_public[count.index].id
+  subnet_id      = aws_subnet.application_public[each.key].id
   route_table_id = aws_route_table.application_public.id
 }
 
