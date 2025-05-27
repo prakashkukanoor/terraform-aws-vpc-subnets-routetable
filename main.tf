@@ -25,36 +25,20 @@ resource "aws_vpc" "this" {
 }
 
 resource "aws_subnet" "application_public" {
-  for_each = var.application_public_subnets
+  count = length(var.application_public_subnets)
 
   vpc_id                  = aws_vpc.this.id
-  cidr_block              = each.value.ipv4_cidr
+  cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
   map_public_ip_on_launch = true
-  availability_zone       = each.value.az
+  availability_zone       = element(var.availability_zone, count.index)
 
-  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, each.value.ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
     local.common_tags,
-  { Name = "${each.key}-${each.value.az}" })
+  { Name = "Application-Public-${element(var.availability_zone, count.index)}" })
 }
-
-# resource "aws_subnet" "application_public" {
-#   count = length(var.application_public_subnets)
-
-#   vpc_id                  = aws_vpc.this.id
-#   cidr_block              = var.application_public_subnets[count.index].ipv4_cidr
-#   map_public_ip_on_launch = true
-#   availability_zone       = element(var.availability_zone, count.index)
-
-#   ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_public_subnets[count.index].ipv6_index) : null
-#   assign_ipv6_address_on_creation = var.enable_ipv6
-
-#   tags = merge(
-#     local.common_tags,
-#   { Name = "Application-Public-${element(var.availability_zone, count.index)}" })
-# }
 
 resource "aws_subnet" "application_private" {
   count = length(var.application_private_subnets)
@@ -144,9 +128,9 @@ resource "aws_route_table" "application_public" {
 }
 
 resource "aws_route_table_association" "application_public" {
-  for_each = aws_subnet.application_public
+  count = length(aws_subnet.application_public)
 
-  subnet_id      = aws_subnet.application_public[each.key].id
+  subnet_id      = aws_subnet.application_public[count.index].id
   route_table_id = aws_route_table.application_public.id
 }
 
