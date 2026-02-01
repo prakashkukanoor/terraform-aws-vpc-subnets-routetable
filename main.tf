@@ -48,7 +48,7 @@ resource "aws_subnet" "application_private" {
   map_public_ip_on_launch = true
   availability_zone       = element(var.availability_zone, count.index)
 
-  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_private_subnets[count.index].ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.application_private_subnets[count.index].ipv6_index + 10) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(
@@ -64,7 +64,7 @@ resource "aws_subnet" "database_private" {
   map_public_ip_on_launch = true
   availability_zone       = element(var.availability_zone, count.index)
 
-  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.database_private_subnets[count.index].ipv6_index) : null
+  ipv6_cidr_block                 = var.enable_ipv6 ? cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, var.database_private_subnets[count.index].ipv6_index + 20) : null
   assign_ipv6_address_on_creation = var.enable_ipv6
 
   tags = merge(

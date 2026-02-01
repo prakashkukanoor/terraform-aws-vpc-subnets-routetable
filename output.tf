@@ -14,6 +14,10 @@ output "database_private_subnet_ids" {
   value = aws_subnet.database_private[*].id
 }
 
+output "database_private_subnets_ipv4_cidr_block" {
+  value = aws_subnet.database_private[*].cidr_block
+}
+
 output "aws_vpce_gateway_dynamodb_id" {
   value = aws_vpc_endpoint.gateway["dynamodb"].id
 }
