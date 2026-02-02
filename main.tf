@@ -140,11 +140,11 @@ resource "aws_route_table" "application_private" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.this[count.index].id
+    nat_gateway_id = aws_nat_gateway.this[count.index].id
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = aws_egress_only_internet_gateway.this.id
+    egress_only_gateway_id      = aws_egress_only_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.application_private, aws_nat_gateway.this]
@@ -167,11 +167,11 @@ resource "aws_route_table" "database_private" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.this[count.index].id
+    nat_gateway_id = aws_nat_gateway.this[count.index].id
   }
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = aws_egress_only_internet_gateway.this.id
+    egress_only_gateway_id      = aws_egress_only_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.database_private, aws_nat_gateway.this, aws_egress_only_internet_gateway.this]
