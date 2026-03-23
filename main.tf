@@ -4,6 +4,19 @@ locals {
     managedBy   = var.team
     createdBy   = "terraform"
   }
+  eks_tags = {
+    tags = {
+      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    }
+    public_subnet_tags = {
+      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+      "kubernetes.io/role/nlb"                    = "1"
+    }
+    private_subnet_tags = {
+      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+      "kubernetes.io/role/internal-nlb"           = "1"
+    }
+  }
 }
 
 # AWS region for infra creation
@@ -21,6 +34,7 @@ resource "aws_vpc" "this" {
 
   tags = merge(
     local.common_tags,
+    local.eks_tags,
   { Name = "VPC-${var.environment}" })
 }
 
@@ -139,12 +153,12 @@ resource "aws_route_table" "application_private" {
   vpc_id = aws_vpc.this.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.this[count.index].id
   }
   route {
-    ipv6_cidr_block = "::/0"
-    egress_only_gateway_id      = aws_egress_only_internet_gateway.this.id
+    ipv6_cidr_block        = "::/0"
+    egress_only_gateway_id = aws_egress_only_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.application_private, aws_nat_gateway.this]
@@ -166,12 +180,12 @@ resource "aws_route_table" "database_private" {
   vpc_id = aws_vpc.this.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.this[count.index].id
   }
   route {
-    ipv6_cidr_block = "::/0"
-    egress_only_gateway_id      = aws_egress_only_internet_gateway.this.id
+    ipv6_cidr_block        = "::/0"
+    egress_only_gateway_id = aws_egress_only_internet_gateway.this.id
   }
 
   depends_on = [aws_subnet.database_private, aws_nat_gateway.this, aws_egress_only_internet_gateway.this]

@@ -9,6 +9,10 @@ variable "team" {
   type = string
 }
 
+variable "cluster_name" {
+  type = string
+}
+
 variable "enable_ipv6" {
   type = bool
 }
