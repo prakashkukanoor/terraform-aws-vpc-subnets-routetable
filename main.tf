@@ -4,19 +4,6 @@ locals {
     managedBy   = var.team
     createdBy   = "terraform"
   }
-  eks_tags = {
-    tags = {
-      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    }
-    public_subnet_tags = {
-      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-      "kubernetes.io/role/nlb"                    = "1"
-    }
-    private_subnet_tags = {
-      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-      "kubernetes.io/role/internal-nlb"           = "1"
-    }
-  }
 }
 
 # AWS region for infra creation
@@ -34,7 +21,6 @@ resource "aws_vpc" "this" {
 
   tags = merge(
     local.common_tags,
-    local.eks_tags,
   { Name = "VPC-${var.environment}" })
 }
 
